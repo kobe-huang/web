@@ -138,7 +138,7 @@
 							{php echo date('Y-m-d H:i', $row['time'])}
 						</td>
 						<td align="center">
-							{php echo $this->_getmembername($row['owner_ID']);}
+							{php echo $this->_getmembername($row['owner_id']);}
 						</td>
 						<td align="right" title="{$row['info']}">{$row['info']}</td>
 						
@@ -193,7 +193,7 @@
 					<div class="form-group">
 						<label class="col-xs-10 col-sm-3 col-md-3 control-label">上传用户</label>
 						<div class="col-sm-6 col-xs-12">
-							<select name="owner_ID"  class='form-control'>
+							<select name="owner_id"  class='form-control'>
 							<option value=""> </option>
 							{loop $_members $row}
 								<option value="{$row['uid']}">{$row['realname']}</option>
@@ -266,11 +266,11 @@
 	uploader.bind('BeforeUpload',function(up,file){
 
 		var info=$("input[name=info]").val();
-		var owner_ID=$("select[name=owner_ID]").val();
+		var owner_id=$("select[name=owner_id]").val();
 		var type=$("select[name=type]").val();
 		uploader.setOption("multipart_params",{
 			"info":info,
-			"owner_ID":owner_ID,
+			"owner_id":owner_id,
 			"type":type,
 		});
 	});

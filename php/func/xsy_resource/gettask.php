@@ -312,7 +312,7 @@ class GETTASK {
                 $alive_data['running_script_id']=$data['TaskId']; //执行的任务id
                 pdo_insert ( "ms_alive_table", $alive_data );
             }else{//更新
-                pdo_update("ms_alive_table",array('strategy_id'=>$data['strategy_id'],'running_script_ID'=>$data['TaskId'],'time'=>$alive_data['time']),array("ms_id"=>$alive_data['ms_id']));
+                pdo_update("ms_alive_table",array('strategy_id'=>$data['strategy_id'],'running_script_id'=>$data['TaskId'],'time'=>$alive_data['time']),array("ms_id"=>$alive_data['ms_id']));
             }
         }
     }

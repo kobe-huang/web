@@ -53,7 +53,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 
 		$info = trim($_GPC ['info']);
-		$owner_ID = $_GPC ['owner_ID'];
+		$owner_id = $_GPC ['owner_id'];
 		if ($op == "save") {
 
 
@@ -69,7 +69,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 				
 
-				if(empty($owner_ID)){
+				if(empty($owner_id)){
 					message ( '请选择上传者', $this->createWebUrl("manager"), 'error' ); 
 				}
 
@@ -113,7 +113,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 						$data = array (
 								"info" => $info,
 								'type' => $type,
-								'owner_ID' => $owner_ID,
+								'owner_id' => $owner_id,
 								'origin_name'=>$file ['name'],
 								'name' => $filename,
 								"path" => $_result['imgurl'],
@@ -196,10 +196,10 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		// 	$condition = " where origin_name like '%" . $search . "%'";
 		// }
 		$sql = "select a.*,c.realname from " . tablename ( 'xsy_resource_file_log' ) . " a 
-		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_ID=c.uid 
+		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_id=c.uid 
 		 {$condition} order by id desc";
 		$count_sql = "select  count(*) from " . tablename ( 'xsy_resource_file_log' ) . " a 
-		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_ID=c.uid 
+		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_id=c.uid 
 		 {$condition}";
 		$params = array ();
 		$total = 0;
@@ -545,8 +545,8 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 	 	$log=array();
 	 	$log['action']=$action;
-		$log['owner_ID']=$data['owner_ID'];
-		$log['script_ID']=$data['id'];
+		$log['owner_id']=$data['owner_id'];
+		$log['script_id']=$data['id'];
 		$log['file_name']=$data['origin_name'];
 		$log['time']=time();
 

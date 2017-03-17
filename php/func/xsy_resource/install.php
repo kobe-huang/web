@@ -6,7 +6,7 @@ if(!pdo_tableexists('xsy_resource_file')){
         `name` varchar(255) DEFAULT NULL,
         `origin_name` varchar(255) DEFAULT NULL,
         `path` varchar(255) DEFAULT NULL,
-        `owner_ID` int(11) DEFAULT NULL,
+        `owner_id` int(11) DEFAULT NULL,
         `time` int(11) DEFAULT NULL,
         PRIMARY KEY (`id`)
       ) ENGINE=myisam  DEFAULT CHARSET=utf8;";
