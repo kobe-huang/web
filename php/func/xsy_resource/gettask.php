@@ -24,13 +24,13 @@ require_once '../../framework/bootstrap.inc.php';  //系统初始化--这个地�
    "strategy_id":"17",
    "time":1489456698},*/
 
-//for 调试，debug输出信息
+//kobe for 调试，debug输出信息
  function print_2_array($contact1)
  {
     return;
     //for($row=0; $row<count($contact1); $row++)
     foreach ($contact1 as $key1 => $value1) {   
-        //error_log($key1);
+        //log_info($key1);
         //使用内层循环遍历数组$contact1 中 子数组的每个元素,使用count()函数控制循环次数
         $out_string = "";
         //for($col=0; $col<count($contact1[$row]); $col++)
@@ -42,6 +42,14 @@ require_once '../../framework/bootstrap.inc.php';  //系统初始化--这个地�
     }
 }
 
+function log_info($info)
+{
+    return;
+    error_log($info);
+}
+
+//------------------------
+//数组按照关键字排序
 function my_sort($arrays,$sort_key,$sort_order=SORT_ASC,$sort_type=SORT_NUMERIC ){   
     if(is_array($arrays)){   
         foreach ($arrays as $array){   
@@ -109,7 +117,7 @@ function my_wash_card($card_num)
         $cards[$i]=$tmp[$index]; 
         unset($tmp[$index]); 
         $tmp=array_values($tmp); 
-        //error_log("my_wash_card: $cards[$i]");
+        //log_info("my_wash_card: $cards[$i]");
     } 
     return $cards; 
 } 
@@ -121,15 +129,15 @@ class GETTASK {
     public $device_id = ""; //设备ID
 
     function task($get){
-        error_log("enter task");
+        log_info("enter task");
         $this->check_web_status(); //检查系统是否在维护状态
         $alive_data = $this->check_user($get);
         $this->account = $alive_data['account'];
-        error_log("check user okay");
+        log_info("check user okay");
         $this->time = time();     //当前系统时间
 
         $data = $this->allot($alive_data['account'], $alive_data['ms_id']);
-        error_log("after allot");
+        log_info("after allot");
         $this->update_alive($data, $alive_data);
 
         $code=101;
@@ -225,10 +233,10 @@ class GETTASK {
         $run_task_index = 0;            //要运行的任务index，初始化为0
         if ( empty($allot) ) {          //未分配过任务
             $task_list = $this->get_strategy_task_list($strategy['id']);
-            error_log("strategy list:");
+            log_info("strategy list:");
             print_2_array($task_list);
             $task_list = $this->reset_task_list($task_list,$strategy); 
-            error_log("task list:");
+            log_info("task list:");
             print_2_array($task_list);   
             $task_list = json_encode($task_list);
            
@@ -321,7 +329,7 @@ class GETTASK {
     function reset_task_list($stratefy_task_list, $strategy){ //重新设置任务列表
         
         $stratefy_task_list = my_sort($stratefy_task_list, 'task_pri' );//按优先级排序；
-        error_log("reset_task_list");
+        log_info("reset_task_list");
         print_2_array($stratefy_task_list);
 
         $task_list = array();
@@ -333,26 +341,26 @@ class GETTASK {
             }
         }
 
-        //error_log("reset_task_list2222:");
+        //log_info("reset_task_list2222:");
         //print_2_array($task_list);
 
         if (1 == $strategy['is_ramd']){      
-           error_log("++++do ramd_task+++++");
+           log_info("++++do ramd_task+++++");
             $task_list = $this->ramd_task($task_list); //做随机化 
         }
 
-        error_log("reset_task_list3333:");
+        log_info("reset_task_list3333:");
         print_2_array($task_list);
 
         $task_list = $this->settime($task_list, $strategy['full_time']); //设置运行时间  
-        error_log("++++do settime++++");
-        error_log($strategy['full_time']);
-        error_log("reset_task_list444:");
+        log_info("++++do settime++++");
+        log_info($strategy['full_time']);
+        log_info("reset_task_list444:");
         print_2_array($task_list);   
         return $task_list;
     }
 
-    //通过帐号查找对应的 策略
+    //通过帐号查找对应的策略
     function get_strategy($account){  
         $strategy = pdo_fetch('SELECT b.* FROM ' . tablename('mc_members') . " a
                 LEFT JOIN " . tablename('ms_strategy') . " b on a.strategy_id=b.id 
@@ -393,7 +401,7 @@ class GETTASK {
             $tmp_num = $task_pri_num_array[$i+1] -  $task_pri_num_array[$i];
            
             $tmp_wash_card_array = array();
-            error_log("wash_card:  $tmp_num");
+            log_info("wash_card:  $tmp_num");
             $tmp_wash_card_array = my_wash_card($tmp_num);
 
             for ($m=0; $m < $tmp_num ; $m++) { 

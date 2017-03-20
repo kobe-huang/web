@@ -4,9 +4,13 @@
  * @author QQ:3419335695
  */
 defined ( 'IN_IA' ) or exit ( 'Access Denied' );
+define('IN_SYS', true);
+require '../framework/bootstrap.inc.php';
+require IA_ROOT . '/web/common/bootstrap.sys.inc.php';
 require IA_ROOT . '/addons/xsy_resource/defines.php';
 
-
+load()->web('common');
+load()->web('template');
 
 class Xsy_resourceModuleSite extends WeModuleSite {
 	
@@ -18,6 +22,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		set_time_limit ( 0 );
 		global $_W, $_GPC;
 		$op = $_GPC ['op'];
+
 		$_setting = pdo_fetch('SELECT * FROM '.tablename("ms_setting")." where 1");
 		if ($op == "setting") {//站点设置
 			$close = $_GPC ['close'];
@@ -28,9 +33,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 			message ( '设置成功', $this->createWebUrl("manager"), 'success' );
 		}elseif ($op == "dels") {//站点设置
 			$ids = $_GPC ['ids'];
-
 			$ids=explode(",",$ids);
-
 			foreach ($ids as $k => $v) {
 				$file_path = pdo_fetchcolumn ("SELECT path FROM " .tablename('xsy_resource_file') . " WHERE id=".$v);
 				$del_path=ATTACHMENT_ROOT.substr($file_path,strlen($_W['setting']['remote']['alioss']['url'])+1);
@@ -54,13 +57,15 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$owner_id = $_GPC ['owner_id'];
 		if ($op == "save") {
 
+
+// echo "<pre>";
+// print_r($_FILES);
+// print_r($_GPC);
+// exit;
+
 			$id = $_GPC['id'];
 			$type = $_GPC ['type'];
 			if(empty($id)){
-
-
-				
-
 				if(empty($owner_id)){
 					message ( '请选择上传者', $this->createWebUrl("manager"), 'error' ); 
 				}
@@ -472,6 +477,15 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		return true;
 	}
 
+
+
+
+
+
+
+
+
+	
 	public function uuid($prefix = '') {
 		$chars = md5 ( uniqid ( mt_rand (), true ) );
 		$uuid = substr ( $chars, 0, 8 );
@@ -532,6 +546,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$log['script_id']=$data['id'];
 		$log['file_name']=$data['origin_name'];
 		$log['time']=time();
+
 		pdo_insert('xsy_resource_file_log', $log);
 	 }
 
@@ -548,7 +563,17 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 	 	}
 	 	return $task_info;
 	 }
+	 // public function _getms_task_index($id){
+	 // 	$ms_task_index=pdo_fetchcolumn("SELECT ms_task_index FROM " .tablename('ms_allot_table') . " WHERE id=".$id);
+	 // 	return $ms_task_index;
+	 // }
+	 // public function _getcounttask($id){
+	 // 	$task=pdo_fetchcolumn("SELECT task FROM " .tablename('ms_allot_table') . " WHERE id=".$id);
 
+	 // 	$task=json_decode($task,true);//已分配任务列表
+	 // 	$task=count($task);
+	 // 	return $task;
+	 // }
 	 public function _gettaskname($id){
 	 	$taskname=pdo_fetchcolumn ("SELECT info FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
 	 	return $taskname;
@@ -581,5 +606,9 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 	 	$ms_task_index=pdo_fetchcolumn("SELECT ms_task_index FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
 	 	return $ms_task_index;
 	 }
+
+
+
+
 
 }
