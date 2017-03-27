@@ -6,18 +6,37 @@
 defined ( 'IN_IA' ) or exit ( 'Access Denied' );
 require IA_ROOT . '/addons/xsy_resource/defines.php';
 
-
+//require IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
 
 class Xsy_resourceModuleSite extends WeModuleSite {
 	
 	/**
 	 * 资源管理
 	 */
+	
+	public function doWebWeb() {
+		require_once IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
+		error_log("enter doWebWeb");
+		$my_obj = new kobeModuleSite();
+		
+
+		$my_obj->do_command();
+		//$this->do_command();	
+		//include $this->template('web/kobe_tpl/user_login');
+		error_log("after dewebweb");
+	}
+	
+	//require IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
 	public function doWebManager() {
 		error_reporting ( 0 );
 		set_time_limit ( 0 );
 		global $_W, $_GPC;
 		$op = $_GPC ['op'];
+
+
+
+
+
 		$_setting = pdo_fetch('SELECT * FROM '.tablename("ms_setting")." where 1");
 		if ($op == "setting") {//站点设置
 			$close = $_GPC ['close'];
@@ -53,6 +72,12 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$info = trim($_GPC ['info']);
 		$owner_id = $_GPC ['owner_id'];
 		if ($op == "save") {
+
+
+// echo "<pre>";
+// print_r($_FILES);
+// print_r($_GPC);
+// exit;
 
 			$id = $_GPC['id'];
 			$type = $_GPC ['type'];
@@ -213,10 +238,14 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='file' order by time desc";
 		$task_list = pdo_fetchall($sql);//脚本列表
 		$sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='data' order by time desc";
-		$data_list = pdo_fetchall($sql);//脚本列表
+		$data_list = pdo_fetchall($sql);//数据列表
         $sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='idle' order by time desc";
-        $idle_list = pdo_fetchall($sql);//脚本列表
+        $idle_list = pdo_fetchall($sql);//空闲列表
 		// $count=count($task_list);//计算有几个脚本得出有几个优先级
+		
+        $sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='excel' order by time desc";
+        $excel_list = pdo_fetchall($sql);//模板列表
+
 
 		$sql = "select * from " . tablename ( 'ms_strategy' ) . " order by id desc";
 		$strategy = pdo_fetchall($sql);//策略列表
@@ -227,15 +256,16 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 				if(empty($_GPC['name']) || empty($_GPC['full_time']) || empty($_GPC['cost']) || empty($_GPC['info']) ){
 					message ( '缺少参数,请重新填写', $this->createWebUrl("strategy"), 'error' );	
 				}
-
-
-                $name=$_GPC['name'];//空闲
 				$owner=$_W['uid'];//制定者
+                $name=$_GPC['name'];//
 				$full_time=$_GPC['full_time'];//执行一轮时间
 				$cost=$_GPC['cost'];//扣点数
 				$is_ramd=$_GPC['is_ramd'];//随机
 				$info=$_GPC['info'];//随机
                 $idle=$_GPC['idle'];//空闲
+                $excel=$_GPC['excel'];//模板
+
+
 
 				$strategy_data=array(
                     'name'=>$name,
@@ -245,6 +275,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 					'is_ramd'=>$is_ramd,
                     'idle'=>$idle,
 					'info'=>$info,
+					'temple_name'=>$excel,
 				);
 
 
@@ -327,6 +358,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 			die(json_encode($task_list));
 		}
+
 
 
 
@@ -472,6 +504,15 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		return true;
 	}
 
+
+
+
+
+
+
+
+
+	
 	public function uuid($prefix = '') {
 		$chars = md5 ( uniqid ( mt_rand (), true ) );
 		$uuid = substr ( $chars, 0, 8 );
@@ -532,6 +573,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$log['script_id']=$data['id'];
 		$log['file_name']=$data['origin_name'];
 		$log['time']=time();
+
 		pdo_insert('xsy_resource_file_log', $log);
 	 }
 
@@ -548,9 +590,21 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 	 	}
 	 	return $task_info;
 	 }
+	 // public function _getms_task_index($id){
+	 // 	$ms_task_index=pdo_fetchcolumn("SELECT ms_task_index FROM " .tablename('ms_allot_table') . " WHERE id=".$id);
+	 // 	return $ms_task_index;
+	 // }
+	 // public function _getcounttask($id){
+	 // 	$task=pdo_fetchcolumn("SELECT task FROM " .tablename('ms_allot_table') . " WHERE id=".$id);
 
+	 // 	$task=json_decode($task,true);//已分配任务列表
+	 // 	$task=count($task);
+	 // 	return $task;
+	 // }
 	 public function _gettaskname($id){
-	 	$taskname=pdo_fetchcolumn ("SELECT info FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
+	 	if(!empty($id)){
+	 		$taskname=pdo_fetchcolumn ("SELECT info FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
+	 	}
 	 	return $taskname;
 	 }
 	 public function _getstrategyname($id){
@@ -581,5 +635,9 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 	 	$ms_task_index=pdo_fetchcolumn("SELECT ms_task_index FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
 	 	return $ms_task_index;
 	 }
+
+
+
+
 
 }
