@@ -11,7 +11,7 @@ require_once 'device_inc/device.inc.php';
 require_once 'device_inc/misc.inc.php';
 
 /**
- *  $arr->数组   $sort->排序顺序标志  
+ *  $arr->数组   $sort->排序顺序标志 
  *     排序顺序标志 SORT_DESC 降序；SORT_ASC 升序 ,
  */
 
@@ -31,15 +31,16 @@ require_once 'device_inc/misc.inc.php';
 class GETTASK {
     public $time = 1489218514; //2017-03-11 03:48:34pm
     public $account ="";    //账户
-    public $user_uid = ""; // user's id
+    public $user_id = ""; // user's id
     public $device_id = ""; //设备ID
+    public $error_num = 0;  //容错的次数
 
     function task($get){
         log_info("----enter task-----");
         $this->check_web_status(); //检查系统是否在维护状态
 
         $alive_data = $this->check_user($get);
-        $this->user_id = $alive['user_id'];
+        $this->user_id = $alive_data['user_id'];
         $this->account = $alive_data['account'];
 
         log_info("check user okay");
@@ -54,19 +55,19 @@ class GETTASK {
         return $this->output($code, $message, $data);
     }
 
-    function output($code, $message, $data){//返回给设备
+    function output($code, $message,  $data){//返回给设备
         $output = array(
             'Code'=>$code ,
             'Message'=>$message
         );
-        if($data){
+        if($data != false){
             $output['data']=$data;
         }
         exit(json_encode($output));
     }
 
     function send_error_info($code, $message){ //发送给设备错误信息
-         exit(json_encode($this->output($code,$message) ) );
+         exit(json_encode($this->output($code,$message, false) ) );
     }
 
     function check_web_status(){ //检查web的状态
@@ -74,7 +75,7 @@ class GETTASK {
         if($_setting['close']==1){//站点维护开启
             $code=105;
             $message='系统维护中';
-            exit(json_encode($this->output($code,$message))); //kobe 这个json_encode是什么用？？
+            exit(json_encode($this->output($code,$message,false))); //kobe 这个json_encode是什么用？？
         }
     }
 
@@ -136,6 +137,7 @@ class GETTASK {
         $strategy = $this->get_strategy($account);//得到策略
         if (empty($strategy)){
             $this->send_error_info(102, "该用户未设置策略");
+            exit;
         }
 
         $allot = pdo_fetch('SELECT * FROM ' . tablename('ms_allot_table') . " where ms_id='".$ms_id."'");//任务列表
@@ -147,11 +149,11 @@ class GETTASK {
             $task_list = $this->reset_task_list($task_list,$strategy); 
             log_info("task list:");
             print_2_array($task_list);   
-            $task_list = json_encode($task_list);
+            $json_task_list = json_encode($task_list);
            
             $task_data=array(
                 'ms_id' => $ms_id,//序列号
-                'task_list'=> $task_list,//执行的任务列表
+                'task_list'=> $json_task_list,//执行的任务列表
                 'ms_task_index'=> 0,
             );
             pdo_insert ( "ms_allot_table", $task_data );        
@@ -161,9 +163,10 @@ class GETTASK {
             $task_list=json_decode($allot['task_list'],true);      //已分配任务列表,从json数据中读出
             //now_timen = 现在的服务器时间
             //检查时间，查task_list, 找出要执行的“任务index”。          
-            $tmp_task_count = count($task_list);        
-            if( $allot['ms_task_index'] + 1 >= $tmp_task_count ){   //如果是运行到最后一个任务
-                pdo_delete("ms_allot_table", array("ms_id" => $ms_id));
+            $tmp_task_count = count($task_list); //任务的个数
+
+            if( $allot['ms_task_index'] + 1 >= $tmp_task_count ){        //如果已经是运行到最后一个任务
+                pdo_delete("ms_allot_table", array("ms_id" => $ms_id));  //重新开始
                 return $this->allot($this->account, $ms_id);
             }
             
@@ -176,7 +179,9 @@ class GETTASK {
                 }
             }
 
-            $tmp_task_index  = $tmp_task_index - 1; 
+            if($tmp_task_index > 0){
+                $tmp_task_index  = $tmp_task_index - 1; 
+            }
             //任务已经执行过了
             //if  current_task_index  ==  "任务index"  then  返回   idle任务给终端   end
             if( $tmp_task_index == $allot['ms_task_index']){
@@ -187,6 +192,7 @@ class GETTASK {
                             'TaskDataID'=>'',
                             'TaskDataPath'=>'',
                             'strategy_id'=>'',
+                            'user_config_path'=>'',
                             );
                 return $data;
             }
@@ -201,14 +207,27 @@ class GETTASK {
                 }              
             }
         }
+        //$tmp_list    = array($task_list[$run_task_index]); //防止错误：Fatal error:  Cannot use string offset as an array
 
-        $TaskId      = $task_list[$run_task_index ]['task_id'];
+        $TaskId      = $task_list[$run_task_index]['task_id'];
         $TaskPath    = $this->get_task_path($TaskId);
         $TaskDataID  = $task_list[$run_task_index]['task_d_id'];
         $TaskDataPath= $this->get_task_path($TaskDataID);
         $strategy_id = $strategy['id'];
 
-        $user_config_path = pdo_fetch("SELECT user_config_path FROM " .tablename('xxx_user_strategy_table') ." WHERE user_id='".$this->user_id."'");
+        if( empty($TaskPath) ) //如果找不到 要执行的任务
+        {
+             $this->error_num++;
+             if( $this->error_num >= 3)
+             {
+                $this->error_num = 0;
+                $this->send_error_info(105,"没有此任务，或被删除"); 
+             }
+             pdo_delete("ms_allot_table", array("ms_id" => $ms_id));  //重新开始
+             return $this->allot($this->account, $ms_id);
+        } 
+
+        $user_config_path = pdo_fetchcolumn("SELECT user_config_path FROM " .tablename('xxx_user_strategy_table') ." WHERE user_id='".$this->user_id."'");
 
         $data=array(
         'TaskId'=>intval($TaskId),
@@ -218,6 +237,8 @@ class GETTASK {
         'strategy_id'=>intval($strategy_id),
         'user_config_path'=>$user_config_path,  //kobe新加一条，用户的配置数据地址
         );
+        log_info("---------------".$this->user_id);
+        log_info($user_config_path);
         return $data;
     }
 
