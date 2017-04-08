@@ -1,3 +1,5 @@
+
+
 {template 'common/header'}
 <style>
 	th{
@@ -9,10 +11,15 @@
 {template 'web/tree'}
 
 
+{if $_W['role_bool']}
+    <script>
+        location.href="{php echo $this->createWebUrl('alive')}";
+    </script>
+{/if}
 
 <!-- 添加幻灯片 -->
 <div id="modal-web-ad" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" style="width: 100%; margin: 0px auto;">
-<form action="{php echo $this->createWebUrl('manager' method="post" enctype="multipart/form-data">
+<form action="{php echo $this->createWebUrl('manager')}" method="post" enctype="multipart/form-data">
         <div class="modal-dialog" style="width: 800px;">
         <input type="hidden" name="op" value="setting" />
             <div class="modal-content">
@@ -111,7 +118,7 @@
 			<table class="table table-hover" style="overflow: visible;">
 				<thead class="navbar-inner">
 					<tr>
-						<th width="50px">删？</th>
+						<th width="60px"><input type="checkbox" class="all_select">删？</th>
 						<th width="50px">ID</th>
 						
 						<th width="20%">原始名称</th>
@@ -133,7 +140,18 @@
 						<td>{$row['id']}</td>
 						<td align="center" title="{$row['origin_name']}">{$row['origin_name']}</td>
 						<td align="center" title="{$row['name']}">{$row['name']}</td>
-						<td align="center">{if $row['type']=='file'}脚本{elseif $row['type']=='data'}数据{else}空闲{/if}</td>
+						<td align="center">
+							{if $row['type']=='file'}
+							脚本
+							{elseif $row['type']=='data'}
+							数据
+							{elseif $row['type']=='idle'}
+							空闲
+							{elseif $row['type']=='excel'}
+							模板
+							{else}
+							未知
+							{/if}</td>
 						<td align="center">
 							{php echo date('Y-m-d H:i', $row['time'])}
 						</td>
@@ -218,7 +236,8 @@
 							<select name="type" class='form-control' >
 								<option value="file">脚本文件</option>
 								<option value="data">数据文件</option>
-								<option value="idle">空闲脚本</option>
+								<option value="idle">空闲任务</option>
+								<option value="excel">策略模版</option>
 							</select>
 						</div>
 					</div>
@@ -288,9 +307,6 @@ function up_submit(){
 
 	return false;
 }
-
-
-
 
 
 
@@ -393,6 +409,15 @@ $(".dels").click(function(){
                 // });
             }
 });
+
+    $(".all_select").click(function(){
+       var cbox=$(".cbox");
+       var bool=$(this).prop("checked");
+       $.each(cbox,function(){
+            cbox.prop("checked",bool);
+        })
+    });
+
 
 
 

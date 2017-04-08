@@ -45,9 +45,15 @@ function print_n_array($contact1)
     }
 }
 
+error_log("-------");
 print_n_array($_GET);
 error_log("+++++++");
 print_n_array($_GPC);
+error_log("+++--+++");
+error_log($_W['uniacid']);
+$_W['uniacid'] = 21;
+
+header('Location: ./test_memche_2.php?ttt=yyy&yyy=zzz');
 
 
  function test_cache($contact1){

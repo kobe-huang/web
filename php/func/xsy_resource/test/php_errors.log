@@ -1,10 +1,139 @@
-[17-Mar-2017 14:46:37 Asia/Shanghai]   1  高某  A公司  北京市  (010)987654321  gm@Linux.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   2  洛某  B公司  上海市  (021)123456789  lm@apache.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   3  峰某  C公司  天津市  (022)24680246  fm@mysql.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   4  书某  D公司  重庆市  (023)13579135  sm@php.com
-[17-Mar-2017 14:46:37 Asia/Shanghai] step1
-[17-Mar-2017 14:46:37 Asia/Shanghai] step2
-[17-Mar-2017 14:46:37 Asia/Shanghai]   1  高某  A公司  北京市  (010)987654321  gm@Linux.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   2  洛某  B公司  上海市  (021)123456789  lm@apache.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   3  峰某  C公司  天津市  (022)24680246  fm@mysql.com
-[17-Mar-2017 14:46:37 Asia/Shanghai]   4  书某  D公司  重庆市  (023)13579135  sm@php.com
+[22-Mar-2017 13:49:59 Asia/Shanghai] session_save_path = 
+[22-Mar-2017 13:49:59 Asia/Shanghai] 1440
+[23-Mar-2017 11:36:55 Asia/Shanghai] -------
+[23-Mar-2017 11:36:55 Asia/Shanghai] +++++++
+[23-Mar-2017 11:36:55 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:36:55 Asia/Shanghai] 
+[23-Mar-2017 11:36:55 Asia/Shanghai] -------
+[23-Mar-2017 11:36:55 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:36:55 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:36:55 Asia/Shanghai] +++++++
+[23-Mar-2017 11:36:55 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:36:55 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:36:55 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:36:55 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:36:55 Asia/Shanghai] 
+[23-Mar-2017 11:38:13 Asia/Shanghai] -------
+[23-Mar-2017 11:38:13 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:13 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:13 Asia/Shanghai] 
+[23-Mar-2017 11:38:13 Asia/Shanghai] -------
+[23-Mar-2017 11:38:13 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:13 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:13 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:13 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:13 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:13 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:13 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:13 Asia/Shanghai] 
+[23-Mar-2017 11:38:19 Asia/Shanghai] -------
+[23-Mar-2017 11:38:19 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:19 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:19 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:19 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:19 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:19 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:19 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:19 Asia/Shanghai] 
+[23-Mar-2017 11:38:27 Asia/Shanghai] -------
+[23-Mar-2017 11:38:27 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:27 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:27 Asia/Shanghai] 
+[23-Mar-2017 11:38:27 Asia/Shanghai] -------
+[23-Mar-2017 11:38:27 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:27 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:27 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:27 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:27 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:27 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:27 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:27 Asia/Shanghai] 
+[23-Mar-2017 11:38:30 Asia/Shanghai] -------
+[23-Mar-2017 11:38:30 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:30 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:30 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:30 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:30 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:30 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:30 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:30 Asia/Shanghai] 
+[23-Mar-2017 11:38:31 Asia/Shanghai] -------
+[23-Mar-2017 11:38:31 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:31 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:31 Asia/Shanghai] 
+[23-Mar-2017 11:38:31 Asia/Shanghai] -------
+[23-Mar-2017 11:38:31 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:31 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:31 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:31 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:31 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:31 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:31 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:31 Asia/Shanghai] 
+[23-Mar-2017 11:38:33 Asia/Shanghai] -------
+[23-Mar-2017 11:38:33 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:33 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:33 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:33 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:33 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:33 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:33 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:33 Asia/Shanghai] 
+[23-Mar-2017 11:38:34 Asia/Shanghai] -------
+[23-Mar-2017 11:38:34 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:34 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:34 Asia/Shanghai] 
+[23-Mar-2017 11:38:34 Asia/Shanghai] -------
+[23-Mar-2017 11:38:34 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 11:38:34 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 11:38:34 Asia/Shanghai] +++++++
+[23-Mar-2017 11:38:34 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 11:38:34 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 11:38:34 Asia/Shanghai] +++--+++
+[23-Mar-2017 11:38:34 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 11:38:34 Asia/Shanghai] 
+[23-Mar-2017 13:26:15 Asia/Shanghai] -------
+[23-Mar-2017 13:26:15 Asia/Shanghai] huangyinke => 3
+[23-Mar-2017 13:26:15 Asia/Shanghai] hu => huang
+[23-Mar-2017 13:26:15 Asia/Shanghai] +++++++
+[23-Mar-2017 13:26:15 Asia/Shanghai] huangyinke => 3
+[23-Mar-2017 13:26:15 Asia/Shanghai] hu => huang
+[23-Mar-2017 13:26:15 Asia/Shanghai] __uid => 2
+[23-Mar-2017 13:26:15 Asia/Shanghai] __uniacid => 3
+[23-Mar-2017 13:26:15 Asia/Shanghai] +++--+++
+[23-Mar-2017 13:26:15 Asia/Shanghai] 
+[23-Mar-2017 13:26:15 Asia/Shanghai] -------
+[23-Mar-2017 13:26:15 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 13:26:15 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 13:26:15 Asia/Shanghai] +++++++
+[23-Mar-2017 13:26:15 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 13:26:15 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 13:26:15 Asia/Shanghai] +++--+++
+[23-Mar-2017 13:26:15 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 13:26:15 Asia/Shanghai] 
+[23-Mar-2017 15:33:26 Asia/Shanghai] -------
+[23-Mar-2017 15:33:26 Asia/Shanghai] huangyinke => 3
+[23-Mar-2017 15:33:26 Asia/Shanghai] hu => huang
+[23-Mar-2017 15:33:26 Asia/Shanghai] +++++++
+[23-Mar-2017 15:33:26 Asia/Shanghai] huangyinke => 3
+[23-Mar-2017 15:33:26 Asia/Shanghai] hu => huang
+[23-Mar-2017 15:33:26 Asia/Shanghai] +++--+++
+[23-Mar-2017 15:33:26 Asia/Shanghai] 
+[23-Mar-2017 15:33:26 Asia/Shanghai] -------
+[23-Mar-2017 15:33:26 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 15:33:26 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 15:33:26 Asia/Shanghai] +++++++
+[23-Mar-2017 15:33:26 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 15:33:26 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 15:33:26 Asia/Shanghai] +++--+++
+[23-Mar-2017 15:33:26 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 15:33:26 Asia/Shanghai] 
+[23-Mar-2017 15:33:49 Asia/Shanghai] -------
+[23-Mar-2017 15:33:49 Asia/Shanghai] ttt => yyy
+[23-Mar-2017 15:33:49 Asia/Shanghai] yyy => zzz
+[23-Mar-2017 15:33:49 Asia/Shanghai] +++++++
+[23-Mar-2017 15:33:49 Asia/Shanghai] PHP Notice:  Undefined variable: _GPC in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 51
+[23-Mar-2017 15:33:49 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 35
+[23-Mar-2017 15:33:49 Asia/Shanghai] +++--+++
+[23-Mar-2017 15:33:49 Asia/Shanghai] PHP Notice:  Undefined variable: _W in /data/wwwroot/default/sl_base/addons/xsy_resource/test/test_memche_2.php on line 53
+[23-Mar-2017 15:33:49 Asia/Shanghai] 

@@ -31,26 +31,30 @@ display:block;
 </style>
 <div class="clearfix">
     <div class="panel panel-default">
-
+    <div class="panel-heading">
+        <button class="btn btn-default task_dels">批量重置</button>
+    </div>   
         <div class="panel-body">
             <table class="table table-hover" style="overflow: visible;">
                 <thead class="navbar-inner">
                     <tr>
+                        <th width="5%"><input type="checkbox" class="all_select">全选</th>
                         <th width="5%">ID</th>
                         <th>用户</th>
                         <th>序号</th>
-                        <th>型号</th>
+                        <th width="5%">型号</th>
                         <th>脚本</th>
                         <th>策略</th>
                         <th>执行时间</th>
-                        <th>进度</th>
-                        <th>查看全部任务</th>
+                        <th width="15%">进度</th>
+                        <th width="10%" style="text-align: center;">操作</th>
                         
                     </tr>
                 </thead>
                 <tbody>
                     {loop $list $row}
                     <tr>
+                        <td><input type="checkbox" name="task_dels[]" value="{$row['ms_id']}" class="cbox"></td>
                         <td>{$row['id']}</td>
                         <td>{$row['account']}</td>
                         <td>{$row['ms_id']}</td>
@@ -63,11 +67,15 @@ display:block;
                                 <span class="blue" style="width:{php echo $this->_getpercent($row['ms_id'])}%;">&nbsp;{php echo $this->_getms_task_index($row['ms_id'])}</span>
                             </div>
                         </td>
-                        <td>
+                        <td style="text-align: center;">
                             <span class="btn-default btn btn-default btn-sm"  onclick="return showinfo('{$row['ms_id']}')">查看运行任务</span>
-                        </td>                        
+                            <!-- <span class="btn-default btn btn-default btn-sm"  onclick="reset('{$row['ms_id']}')">重置</span> -->
+                        </td>                      
                     </tr>
                     {/loop}
+                    {if empty($list)}
+                    <tr><td colspan="9" align="center">暂无运行中的终端</td></tr>
+                    {/if}
                 </tbody>
             </table>
             {$pager}
@@ -126,6 +134,35 @@ display:block;
             $('#showinfo').css('display','none'); 
 
       }
+
+    $(".task_dels").click(function(){
+        var bool=confirm("是否确定重置？");
+        if(bool){
+            var ids="";
+            $(".cbox").each(function(){
+                if($(this).prop("checked")){
+                    ids += $(this).val()+",";
+                }
+           });
+
+           if (ids.length > 0) {
+                ids = ids.substr(0, ids.length - 1);
+            }else{
+                alert('请选择要重置的任务');
+                return;
+            }
+            window.location.href="{php echo $this->createWebUrl('alive',array(op=>'task_list_dels'))}&ids="+ids;
+        }
+    });
+
+
+    $(".all_select").click(function(){
+       var cbox=$(".cbox");
+       var bool=$(this).prop("checked");
+       $.each(cbox,function(){
+            cbox.prop("checked",bool);
+        })
+    });
 
 </script>
 {template 'common/footer'}

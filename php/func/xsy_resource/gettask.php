@@ -2,8 +2,8 @@
 /**
  * @Author: 特筹网
  * @Date:   2017-01-12 14:41:04
- * @Last Modified by:   gangareset_task_listn
- * @Last Modified time: 2017-03-09 15:05:35
+ * @Last Modified by:   gangan
+ * @Last Modified time: 2017-03-30 11:06:14
  */
 header('Content-Type:text/html;charset=utf-8'); 
 //require_once '../../framework/bootstrap.inc.php';  //系统初始化--这个地方需要优化，只初始化ql和cache就好了，其他的不用
@@ -132,6 +132,7 @@ class GETTASK {
     /**
      * 根据用户序号找出对应策略，根据策略分配任务
      * $ms_id   终端序号
+     * $account 账号
      */ 
     function allot($account,$ms_id){
         $strategy = $this->get_strategy($account);//得到策略
@@ -252,7 +253,7 @@ class GETTASK {
                 $alive_data['running_script_id']=$data['TaskId']; //执行的任务id
                 pdo_insert ( "ms_alive_table", $alive_data );
             }else{//更新
-                pdo_update("ms_alive_table",array('strategy_id'=>$data['strategy_id'],'running_script_id'=>$data['TaskId'],'time'=>$alive_data['time']),array("ms_id"=>$alive_data['ms_id']));
+                pdo_update("ms_alive_table",array('strategy_id'=>$data['strategy_id'],'running_script_id'=>$data['TaskId'],'time'=>$alive_data['time'],'account'=>$alive_data['account']),array("ms_id"=>$alive_data['ms_id']));
             }
         }
     }
@@ -309,10 +310,23 @@ class GETTASK {
 
 
     function get_task_path($id){
-        if(!empty($id)){
+        if(!empty($id) && ($id != 0) ){ //当没有设置任务数据的时候 task_d_id 为0
             $file_path = pdo_fetchcolumn ("SELECT path FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
         }
-        return $file_path;
+        else
+        {
+            return;
+        }
+        if (!empty($file_path))
+        {
+            return $file_path;
+        }
+        else
+        {
+            error_log("not get task: " . $id);
+            error_log($this->device_id);
+            return;
+        }
     }
 
     //随机同一个优先级的任务
