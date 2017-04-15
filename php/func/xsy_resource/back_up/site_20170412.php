@@ -1,11 +1,12 @@
 <?php
 /**
- * 入口文件
- * @author QQ:3419335695
+ * @Author: 中控
+ * @Date:   2016-08-12 16:56:23
+ * @Last Modified by:   gangan
+ * @Last Modified time: 2017-03-30 18:28:20
  */
 defined ( 'IN_IA' ) or exit ( 'Access Denied' );
 require IA_ROOT . '/addons/xsy_resource/defines.php';
-require IA_ROOT . '/addons/xsy_resource/device_inc/device.inc.php';
 
 //require IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
 
@@ -310,6 +311,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 					if(!empty($id)){//修改，先把原有的都删除再新增
 							pdo_delete ( "ms_strategy_task_list", array ("strategy_id" => intval ( $id ) ) );
 						}
+
 					foreach ($task_id as $key => $value) {
 						$task_data=array(
 							'task_id'=>$value,
@@ -468,32 +470,6 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
 		include $this->template ( 'web/allot' );
 	}
-
-	public function get_page_memc_data($sql,  &$total, &$pager, &$list, &$total_page = 0){
-		try {
-			global $_GPC;
-			$psize = 10;
-			$pindex = max ( 1, intval ( $_GPC ['page'] ) ); //index最小为1
-			//$total = pdo_fetchcolumn ( $count_sql, $params );
-			$total_device_list = get_total_device_list($sql);
-			$device_num = count($total_device_list);
-			$total = $device_num;
-			 
-			$total_page = ($device_num % $psize == 0) ? $device_num / $psize : intval ( $device_num / $psize ) + 1;
-			if (($pindex - 1) * $psize > $device_num)
-				$pindex = 1;
-		    //error_log("111111");	
-			//$list = pdo_fetchall ( "$sql limit " . (($pindex - 1) * $psize) . ",$psize", $params );
-			$list  = get_task_list_by_page($total_device_list, $psize,  $pindex);
-			$pager = pagination ( $device_num, $pindex, $psize );
-			//error_log("22222: ". $device_num );
-			return false;
-		} catch ( Exception $e ) {
-			return $e->getMessage ();
-		}
-
-	}
-
 	/**
 	 * 终端日志页面
 	 */
@@ -506,49 +482,48 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		
 		if($_GPC['op']=='showinfo'){
 			$ms_id=$_GPC['ms_id'];
-			/*$task=pdo_fetchcolumn ("SELECT task_list FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
-			$task=json_decode($task,true);//已分配任务列表*/
-			$task = memc_get_task_list($ms_id);
+			$task=pdo_fetchcolumn ("SELECT task_list FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
+			$task=json_decode($task,true);//已分配任务列表
 
 			foreach ($task as $key => $value) {
 					$task_name=$this->_gettaskname($value['task_id']);
 
-					if($value['task_data_id']==0){
-						$task_data_name='无';
+					if($value['task_d_id']==0){
+						$task_d_name='无';
 					}else{
-						$task_data_name=$this->_gettaskname($value['task_data_id']);
-						$task_data_name=$task_data_name ? $task_data_name : '';
+						$task_d_name=$this->_gettaskname($value['task_d_id']);
+						$task_d_name=$task_d_name ? $task_d_name : '';
 					}
 					date_default_timezone_set("Asia/Shanghai"); //kobe add
 					$time = date("m-d H:i:s",$value['time']);
 
 					$task[$key]['task_id']= $task_name ? $task_name : '';
-					$task[$key]['task_data_id']= $task_data_name;
+					$task[$key]['task_d_id']= $task_d_name;
 					$task[$key]['time'] = $time;
 			}
 
 			die(json_encode($task));
 		}
-		//---------------------kobe begin ----------------------------
-		elseif ($_GPC['op'] == "task_list_dels") {//站点设置
-			$ids = $_GPC ['ids'];
-			//error_log("---task_list_dels---");	
-			$ids=explode(",",$ids);
-			foreach ($ids as $k => $v) {
-					//pdo_delete ( "ms_allot_table", array ("ms_id" => intval ( $v )) );
-					del_memc_task_list($v);  //直接从Memcached中删除
-				}
+//---------------------kobe begin ----------------------------
+        elseif ($_GPC['op'] == "task_list_dels") {//站点设置
+            $ids = $_GPC ['ids'];
 
-			message ( '重置成功', $this->createWebUrl("alive"), 'success' );
-			exit;
-		}//----------kobe end-----------
+            $ids=explode(",",$ids);
 
+            foreach ($ids as $k => $v) {
+                    pdo_delete ( "ms_allot_table", array ("ms_id" => $v) );
+                }
 
-		if($_W['role_bool']){ //判断是否是管理员
-			$uid=$_W['uid'];
-			$realname=pdo_fetchcolumn ("SELECT realname FROM " .tablename('mc_members') . " WHERE uid=".$uid);
-			$w=" where account='".$realname."'";		
-		}
+            message ( '重置成功', $this->createWebUrl("alive"), 'success' );
+            exit;
+        }//----------kobe end-----------
+
+if($_W['role_bool']){
+	$uid=$_W['uid'];
+	$realname=pdo_fetchcolumn ("SELECT realname FROM " .tablename('mc_members') . " WHERE uid=".$uid);
+	$w=" where account='".$realname."'";
+	
+}
 
 
 		$sql ="select * from ".tablename ( 'ms_alive_table' ).$w."order by id desc";
@@ -557,10 +532,10 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$total = 0;
 		$pager;
 		$total_page;
-		$list = array();
-		//$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
-		$this->get_page_memc_data($sql, $total, $pager, $list, $total_page );
-		//error_log("enter========");
+		$list = array ();
+		$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
+
+
 		include $this->template ( 'web/alive' );
 	}
 	/**
@@ -585,6 +560,10 @@ class Xsy_resourceModuleSite extends WeModuleSite {
             readfile($url);
             exit;
         }
+
+
+
+
 		include $this->template ( 'default/resource' );
 	}
 

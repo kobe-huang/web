@@ -5,29 +5,11 @@
  */
 defined ( 'IN_IA' ) or exit ( 'Access Denied' );
 require IA_ROOT . '/addons/xsy_resource/defines.php';
-require IA_ROOT . '/addons/xsy_resource/device_inc/device.inc.php';
-
-//require IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
-
 class Xsy_resourceModuleSite extends WeModuleSite {
 	
 	/**
 	 * 资源管理
 	 */
-	
-	public function doWebWeb() {
-		require_once IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
-		error_log("enter doWebWeb");
-		$my_obj = new kobeModuleSite();
-		
-
-		$my_obj->do_command();
-		//$this->do_command();	
-		//include $this->template('web/kobe_tpl/user_login');
-		error_log("after dewebweb");
-	}
-	
-	//require IA_ROOT . '/addons/xsy_resource/kobe_inc/user_site.php';
 	public function doWebManager() {
 		error_reporting ( 0 );
 		set_time_limit ( 0 );
@@ -71,7 +53,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 
 		$info = trim($_GPC ['info']);
-		$owner_id = $_GPC ['owner_id'];
+		$owner_ID = $_GPC ['owner_ID'];
 		if ($op == "save") {
 
 
@@ -87,7 +69,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 				
 
-				if(empty($owner_id)){
+				if(empty($owner_ID)){
 					message ( '请选择上传者', $this->createWebUrl("manager"), 'error' ); 
 				}
 
@@ -131,7 +113,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 						$data = array (
 								"info" => $info,
 								'type' => $type,
-								'owner_id' => $owner_id,
+								'owner_ID' => $owner_ID,
 								'origin_name'=>$file ['name'],
 								'name' => $filename,
 								"path" => $_result['imgurl'],
@@ -214,10 +196,10 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		// 	$condition = " where origin_name like '%" . $search . "%'";
 		// }
 		$sql = "select a.*,c.realname from " . tablename ( 'xsy_resource_file_log' ) . " a 
-		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_id=c.uid 
+		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_ID=c.uid 
 		 {$condition} order by id desc";
 		$count_sql = "select  count(*) from " . tablename ( 'xsy_resource_file_log' ) . " a 
-		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_id=c.uid 
+		LEFT JOIN " . tablename ( 'mc_members' ) . " c on a.owner_ID=c.uid 
 		 {$condition}";
 		$params = array ();
 		$total = 0;
@@ -239,63 +221,43 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='file' order by time desc";
 		$task_list = pdo_fetchall($sql);//脚本列表
 		$sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='data' order by time desc";
-		$data_list = pdo_fetchall($sql);//数据列表
+		$data_list = pdo_fetchall($sql);//脚本列表
         $sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='idle' order by time desc";
-        $idle_list = pdo_fetchall($sql);//空闲列表
+        $idle_list = pdo_fetchall($sql);//脚本列表
 		// $count=count($task_list);//计算有几个脚本得出有几个优先级
-		
-        $sql = "select * from " . tablename ( 'xsy_resource_file' ) . " where type='excel' order by time desc";
-        $excel_list = pdo_fetchall($sql);//模板列表
-
 
 		$sql = "select * from " . tablename ( 'ms_strategy' ) . " order by id desc";
 		$strategy = pdo_fetchall($sql);//策略列表
 
 		if ($_GPC['dopost'] == 'add') {
-				$id=$_GPC['id'];
 
 				//增加策略表
 				if(empty($_GPC['name']) || empty($_GPC['full_time']) || empty($_GPC['cost']) || empty($_GPC['info']) ){
 					message ( '缺少参数,请重新填写', $this->createWebUrl("strategy"), 'error' );	
 				}
+
+
+                $name=$_GPC['name'];//空闲
 				$owner=$_W['uid'];//制定者
-                $name=$_GPC['name'];//
 				$full_time=$_GPC['full_time'];//执行一轮时间
 				$cost=$_GPC['cost'];//扣点数
 				$is_ramd=$_GPC['is_ramd'];//随机
 				$info=$_GPC['info'];//随机
                 $idle=$_GPC['idle'];//空闲
-                $excel=$_GPC['excel'];//模板
+
+				$strategy_data=array(
+                    'name'=>$name,
+					'owner'=>$owner,
+					'full_time'=>$full_time,
+					'cost'=>$cost,
+					'is_ramd'=>$is_ramd,
+                    'idle'=>$idle,
+					'info'=>$info,
+				);
 
 
-
-                if(empty($id)){//增加
-					$strategy_data=array(
-	                    'name'=>$name,
-						'owner'=>$owner,
-						'full_time'=>$full_time,
-						'cost'=>$cost,
-						'is_ramd'=>$is_ramd,
-	                    'idle'=>$idle,
-						'info'=>$info,
-						'temple_name'=>$excel,
-					);
-
-
-					pdo_insert ( "ms_strategy", $strategy_data );
-					$strategy_id = pdo_insertid();
-                }else{//修改
-                	$strategy_data=array(
-	                    'name'=>$name,
-						'full_time'=>$full_time,
-						'cost'=>$cost,
-						'is_ramd'=>$is_ramd,
-						'info'=>$info,
-					);
-					pdo_update ( "ms_strategy", $strategy_data , array("id"=>$id));
-					$strategy_id = $id;
-                }
-
+				pdo_insert ( "ms_strategy", $strategy_data );
+				$strategy_id = pdo_insertid();
 
 				if(!empty($strategy_id)){
 
@@ -307,9 +269,6 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 					$task_d_id=$_GPC['task_d_id'];//次
 					$task=array();
 
-					if(!empty($id)){//修改，先把原有的都删除再新增
-							pdo_delete ( "ms_strategy_task_list", array ("strategy_id" => intval ( $id ) ) );
-						}
 					foreach ($task_id as $key => $value) {
 						$task_data=array(
 							'task_id'=>$value,
@@ -319,15 +278,16 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 							'task_d_id'=>$task_d_id[$key],
 							'strategy_id'=>$strategy_id,
 						);
-
+				// echo "<pre>";
+				// print_r($task_data);
+				
+				
+				
 						pdo_insert ( "ms_strategy_task_list", $task_data );
 					}
 
 				}
 
-				if(!empty($id)){
-					message ( '策略修改成功', $this->createWebUrl("strategy"), 'success' );	
-				}
 				message ( '策略添加成功', $this->createWebUrl("strategy"), 'success' );	
 
 
@@ -374,50 +334,8 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 
 			die(json_encode($task_list));
-		}elseif($_GPC['dopost'] == 'get_edit'){
-			$op = $_GPC ['op'];
-			$id=$_GPC['id'];
-			if($op=='tasklist'){
-				$task_list = pdo_fetchall("SELECT a.task_d_id,a.task_time,a.task_num,a.task_pri,b.id,b.origin_name,b.info from " . tablename ( 'ms_strategy_task_list' ) . " a 
-					LEFT JOIN " . tablename ( 'xsy_resource_file' ) . " b on a.task_id=b.id 
-				 where a.strategy_id=".$id);
-
-				foreach ($task_list as $key => $value) {
-						if($value['task_d_id']==0){
-							$task_d_name='';
-						}else{
-							$task_d_name=$this->_gettaskorigin_name($value['task_d_id']);
-							$task_d_name=$task_d_name ? $task_d_name : '';
-							$task_d_info=$this->_gettaskname($value['task_d_id']);
-							$task_d_info=$task_d_info ? $task_d_info : '';
-						}
-						$task_list[$key]['task_d_name']=$task_d_name;
-						$task_list[$key]['task_d_info']=$task_d_info;
-				}
-
-
-				die(json_encode($task_list));
-			}elseif($op=='strategyinfo'){
-				$strategy = pdo_fetch("SELECT * from " . tablename ( 'ms_strategy' ) . " where id=".$id);
-				die(json_encode($strategy));
-			}
-
-
 		}
 
-
-// <pre>Array
-// (
-//     [0] => Array
-//         (
-//             [id] => 62
-//             [task_id] => 232
-//             [task_d_id] => 248
-//             [task_time] => 700
-//             [task_num] => 30
-//             [task_pri] => 1
-//             [strategy_id] => 29
-//         )
 
 
 
@@ -468,32 +386,6 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
 		include $this->template ( 'web/allot' );
 	}
-
-	public function get_page_memc_data($sql,  &$total, &$pager, &$list, &$total_page = 0){
-		try {
-			global $_GPC;
-			$psize = 10;
-			$pindex = max ( 1, intval ( $_GPC ['page'] ) ); //index最小为1
-			//$total = pdo_fetchcolumn ( $count_sql, $params );
-			$total_device_list = get_total_device_list($sql);
-			$device_num = count($total_device_list);
-			$total = $device_num;
-			 
-			$total_page = ($device_num % $psize == 0) ? $device_num / $psize : intval ( $device_num / $psize ) + 1;
-			if (($pindex - 1) * $psize > $device_num)
-				$pindex = 1;
-		    //error_log("111111");	
-			//$list = pdo_fetchall ( "$sql limit " . (($pindex - 1) * $psize) . ",$psize", $params );
-			$list  = get_task_list_by_page($total_device_list, $psize,  $pindex);
-			$pager = pagination ( $device_num, $pindex, $psize );
-			//error_log("22222: ". $device_num );
-			return false;
-		} catch ( Exception $e ) {
-			return $e->getMessage ();
-		}
-
-	}
-
 	/**
 	 * 终端日志页面
 	 */
@@ -506,61 +398,38 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 		
 		if($_GPC['op']=='showinfo'){
 			$ms_id=$_GPC['ms_id'];
-			/*$task=pdo_fetchcolumn ("SELECT task_list FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
-			$task=json_decode($task,true);//已分配任务列表*/
-			$task = memc_get_task_list($ms_id);
+			$task=pdo_fetchcolumn ("SELECT task_list FROM " .tablename('ms_allot_table') . " WHERE ms_id='".$ms_id."'");
+			$task=json_decode($task,true);//已分配任务列表
 
 			foreach ($task as $key => $value) {
 					$task_name=$this->_gettaskname($value['task_id']);
 
-					if($value['task_data_id']==0){
-						$task_data_name='无';
+					if($value['task_d_id']==0){
+						$task_d_name='无';
 					}else{
-						$task_data_name=$this->_gettaskname($value['task_data_id']);
-						$task_data_name=$task_data_name ? $task_data_name : '';
+						$task_d_name=$this->_gettaskname($value['task_d_id']);
+						$task_d_name=$task_d_name ? $task_d_name : '';
 					}
-					date_default_timezone_set("Asia/Shanghai"); //kobe add
-					$time = date("m-d H:i:s",$value['time']);
-
 					$task[$key]['task_id']= $task_name ? $task_name : '';
-					$task[$key]['task_data_id']= $task_data_name;
-					$task[$key]['time'] = $time;
+					$task[$key]['task_d_id']= $task_d_name;
 			}
 
 			die(json_encode($task));
 		}
-		//---------------------kobe begin ----------------------------
-		elseif ($_GPC['op'] == "task_list_dels") {//站点设置
-			$ids = $_GPC ['ids'];
-			//error_log("---task_list_dels---");	
-			$ids=explode(",",$ids);
-			foreach ($ids as $k => $v) {
-					//pdo_delete ( "ms_allot_table", array ("ms_id" => intval ( $v )) );
-					del_memc_task_list($v);  //直接从Memcached中删除
-				}
-
-			message ( '重置成功', $this->createWebUrl("alive"), 'success' );
-			exit;
-		}//----------kobe end-----------
 
 
-		if($_W['role_bool']){ //判断是否是管理员
-			$uid=$_W['uid'];
-			$realname=pdo_fetchcolumn ("SELECT realname FROM " .tablename('mc_members') . " WHERE uid=".$uid);
-			$w=" where account='".$realname."'";		
-		}
 
 
-		$sql ="select * from ".tablename ( 'ms_alive_table' ).$w."order by id desc";
-		$count_sql = "select count(*) from " . tablename ( "ms_alive_table" ).$w;
+		$sql ="select * from ".tablename ( 'ms_alive_table' )."order by id desc";
+		$count_sql = "select count(*) from " . tablename ( "ms_alive_table" );
 		$params = array ();
 		$total = 0;
 		$pager;
 		$total_page;
-		$list = array();
-		//$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
-		$this->get_page_memc_data($sql, $total, $pager, $list, $total_page );
-		//error_log("enter========");
+		$list = array ();
+		$this->get_page_data ( $sql, $count_sql, $params, $total, $pager, $list, $total_page );
+
+
 		include $this->template ( 'web/alive' );
 	}
 	/**
@@ -585,6 +454,10 @@ class Xsy_resourceModuleSite extends WeModuleSite {
             readfile($url);
             exit;
         }
+
+
+
+
 		include $this->template ( 'default/resource' );
 	}
 
@@ -668,8 +541,8 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 
 	 	$log=array();
 	 	$log['action']=$action;
-		$log['owner_id']=$data['owner_id'];
-		$log['script_id']=$data['id'];
+		$log['owner_ID']=$data['owner_ID'];
+		$log['script_ID']=$data['id'];
 		$log['file_name']=$data['origin_name'];
 		$log['time']=time();
 
@@ -701,15 +574,7 @@ class Xsy_resourceModuleSite extends WeModuleSite {
 	 // 	return $task;
 	 // }
 	 public function _gettaskname($id){
-	 	if(!empty($id)){
-	 		$taskname=pdo_fetchcolumn ("SELECT info FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
-	 	}
-	 	return $taskname;
-	 }
-	 public function _gettaskorigin_name($id){
-	 	if(!empty($id)){
-	 		$taskname=pdo_fetchcolumn ("SELECT origin_name FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
-	 	}
+	 	$taskname=pdo_fetchcolumn ("SELECT info FROM " .tablename('xsy_resource_file') . " WHERE id=".$id);
 	 	return $taskname;
 	 }
 	 public function _getstrategyname($id){

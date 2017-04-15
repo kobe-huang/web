@@ -59,12 +59,12 @@ display:block;
                         <td>{$row['account']}</td>
                         <td>{$row['ms_id']}</td>
                         <td>{$row['ms_type']}</td>
-                        <td>{$row['task_name']}</td>
-                        <td>{$row['strategy_name']}</td>
+                        <td>{php echo $this->_gettaskname($row['running_script_id'])}</td>
+                        <td>{php echo $this->_getstrategyname($row['strategy_id'])}</td>
                         <td>{php echo date('m-d H:i:s', $row['time'])}</td>
                         <td>
                             <div class="graph">
-                                <span class="blue" style="width:{php echo intval(intval($row['task_index'])/intval($row['task_num'])*100) }%;">&nbsp;{php echo $row['task_index']}</span>
+                                <span class="blue" style="width:{php echo $this->_getpercent($row['ms_id'])}%;">&nbsp;{php echo $this->_getms_task_index($row['ms_id'])}</span>
                             </div>
                         </td>
                         <td style="text-align: center;">
@@ -117,7 +117,7 @@ display:block;
           $.getJSON("{php echo $this->createWebUrl('alive',array(op=>'showinfo'))}",data, function(json){
                     $.each(json,function(i,result){
 
-                            item = "<tr><td>"+(i+1)+"</td><td>"+result['task_pri']+"</td><td>"+result['task_id']+"</td><td>"+result['task_data_id']+"</td><td>"+result['task_time']+" s</td><td>"+result['time']+" s</td></tr>"; 
+                            item = "<tr><td>"+(i+1)+"</td><td>"+result['task_pri']+"</td><td>"+result['task_id']+"</td><td>"+result['task_d_id']+"</td><td>"+result['task_time']+" s</td><td>"+result['time']+" s</td></tr>"; 
                         $('#showinfo').append(item); 
                         $('#showinfo').css('display','');
                     });
