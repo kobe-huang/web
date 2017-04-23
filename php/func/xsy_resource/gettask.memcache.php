@@ -9,6 +9,7 @@ header('Content-Type:text/html;charset=utf-8');
 //require_once '../../framework/bootstrap.inc.php';  //系统初始化--这个地方需要优化，只初始化ql和cache就好了，其他的不用
 require_once 'device_inc/sys.inc.php';
 require_once 'device_inc/misc.inc.php';
+require_once 'device_inc/device.inc.php';
 
 /**
  *  $arr->数组   $sort->排序顺序标志 
@@ -28,6 +29,7 @@ class GETTASK {
     //memcached相关，缓存数据
     public $m_dev_task_list   = null;
     public $m_dev_info        = null;
+    public $m_dev_track_info  = null;
     public $m_user_info       = null;
     public $m_g_info          = null;
 
@@ -187,6 +189,13 @@ class GETTASK {
                     $this->m_user_info['user_config_path'] = pdo_fetchcolumn($sql);
                    /* $user_config_path_array = pdo_fetchall("SELECT user_config_path FROM " .tablename('xxx_user_strategy_table') .
                         " WHERE user_id='".$this->user_id."'" );*/
+                    //当用户切换策略，但是此时有没有更新模版数据，返回错误，并退出
+                    if(!empty($strategy['temple_name']) && empty($this->m_user_info['user_config_path'] ) )
+                    {
+                        $this->send_error_info(102, "请设置用户模版数据");
+                        exit;
+                    }
+
                     log_info($sql);
                     log_info($this->m_user_info['user_config_path']);
 
@@ -212,7 +221,7 @@ class GETTASK {
         global $_W;
         log_info("check_device");
         $this->m_dev_info = cache_read($this->pre_fix_dev_id . 'dev_info');
-        if($this->m_dev_info['user_id'] != $this->m_user_info['user_id'] ) //如果途中更换用户
+        if($this->m_dev_info['user_id'] != $this->m_user_info['user_id'] ) //如果设备更换用户，更换策略
         {   
             $this->m_dev_info       = null;
             $this->m_dev_task_list  = null;
@@ -222,7 +231,12 @@ class GETTASK {
         
         if ( ( !empty($this->dev_msg['ms_token'] )&& !empty($this->m_dev_info['token']) ) && 
         ($this->dev_msg['ms_token'] == $this->m_dev_info['token']) ){ //正常状况
-            return true;
+            if( ( !empty($this->dev_msg['ms_reset'] )  )&& ('true' == $this->dev_msg['ms_reset'] )  ){
+                del_memc_task_list($this->dev_msg['ms_act']);  //如果是复位信息
+            }
+            else{
+                return true;
+            }
         }
         
         if(!empty($this->dev_msg['ms_pwd']))
@@ -234,7 +248,11 @@ class GETTASK {
             $password=$user['password'];
             $ms_pwd=md5(trim($this->dev_msg['ms_pwd']) . $salt . $_W['config']['setting']['authkey']);
             if($ms_pwd==$password)
-            {
+            {       
+                  //如果是复位信息
+                 if( ( !empty($this->dev_msg['ms_reset'] )  )&& ('true' == $this->dev_msg['ms_reset'] )  ){
+                     del_memc_task_list($this->dev_msg['ms_act']);  //如果是复位信息
+                 }
                 // 密码正确           
                 $this->m_dev_info['token']   = my_generate_token(); //产生16位的token               
                 $this->m_dev_info['user_id'] = $user['uid'];
@@ -270,17 +288,33 @@ class GETTASK {
     function allot(){
         //$strategy = $this->get_strategy($account);//得到策略
         log_info("allot");
+        $this->time = time();
+        //如果是统计数据
+        if( ( !empty($this->dev_msg['ms_track'] )  )&& ('true' == $this->dev_msg['ms_track'] ) ){
+             $this->m_dev_track_info = $this->dev_msg; 
+             $this->m_dev_track_info['ms_act']      = null;
+             $this->m_dev_track_info['ms_pwd']      = null;
+             $this->m_dev_track_info['ms_token']    = null;
+             $this->m_dev_track_info['ms_track']    = null;
+             cache_write($this->pre_fix_dev_id . "dev_track_info", $this->m_dev_track_info);
+        }
+
         $this->m_dev_task_list = cache_read($this->pre_fix_dev_id  . 'dev_task_list'); 
         $task_list = $this->m_dev_task_list;
         $run_task_index = 0;            //要运行的任务index，初始化为0
-        $this->time = time();
+       
 
         if ( empty($task_list) ) {          //未分配过任务
+            error_log("ms_act =  " . $this->dev_msg['ms_act']);
             $strategy  = $this->get_strategy($this->dev_msg['ms_act']);
+            error_log("strategy_id =  " . $this->m_user_info['strategy_id']);
             $task_list = $this->get_strategy_task_list($this->m_user_info['strategy_id']);
-            
-            log_info("strategy list:");
-            print_2_array($task_list);
+                
+            if($this->dev_msg['ms_id'] == '841288W1DZZ'){   
+                log_info("strategy list:");
+                print_2_array($task_list);
+            }
+
             $task_list = $this->reset_task_list($task_list, $strategy); 
 
             for ($task_i=0; $task_i<count($task_list) ; $task_i++) { 
@@ -296,9 +330,11 @@ class GETTASK {
             cache_write($this->pre_fix_dev_id . "dev_task_list", $this->m_dev_task_list); //写入任务列表
             $this->m_dev_info['task_index'] = 0;
             cache_write($this->pre_fix_dev_id . "dev_info", $this->m_dev_info);
-
-            log_info("task list:");
-            print_2_array($task_list);             
+            if($this->dev_msg['ms_id'] == '841288W1DZZ')
+            {
+                log_info("task list:");
+                print_2_array($task_list); 
+            }            
         }
         else{  //已分配过任务，存在任务列表            
             
@@ -509,7 +545,16 @@ class GETTASK {
             $num += $v['task_time']; //task_time 为每个任务运行的时间
         }
 
-        $full_time = $full_time - $num;
+        //$full_time = $full_time - $num;
+        if($full_time>$num)
+        {
+            $full_time = $full_time - $num;
+        }
+        else
+        {
+            $full_time = 0;
+        }
+
         $count=count($list);
 
         $rand_time = my_randnum($full_time, $count);

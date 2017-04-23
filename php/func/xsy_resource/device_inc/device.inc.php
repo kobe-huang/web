@@ -1,5 +1,5 @@
 <?php
-require IA_ROOT . '/addons/xsy_resource/device_inc/misc.inc.php';
+require_once IA_ROOT . '/addons/xsy_resource/device_inc/misc.inc.php';
 
 /*function print_n_array($contact1, $i = 0)
 {	
@@ -44,13 +44,14 @@ function del_memc_task_list($ms_id){
 	log_info('++++delete '. $ms_id);
 	cache_delete($ms_id . '_dev_task_list');
 	cache_delete($ms_id . '_dev_info');
+	cache_delete($ms_id . '_dev_track_info');
 }
 
 
 //用户更新策略的时候调用清除缓存
 function update_user_strategy($ms_act){
 	log_info('update_user_strategy: ' . $ms_act);
-	cache_delete($ms_act . "user_info"); //删除用户的cache
+	cache_delete($ms_act . "_user_info"); //删除用户的cache
 	$sql = "select ms_id from ".tablename ( 'ms_alive_table' )." where account='".$ms_act."'";
 	$dev_list = pdo_fetchall($sql);
 	if (!empty($dev_list))
